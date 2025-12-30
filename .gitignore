@@ -1,4 +1,4 @@
-node_modules
+node_modules/
 .env
 *.log
 .env.local
@@ -8,3 +8,4 @@ Thumbs.db
 *.tmp
 coverage/
 .nyc_output/    
+scripts/
