@@ -11,7 +11,13 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+app.use(cors({
+  origin: [
+    'https://shrikrishnaintl.com',
+    'http://localhost:3000' // allow local dev if needed
+  ],
+  credentials: true
+}));
 app.use(bodyParser.json());
 
 // MongoDB connection

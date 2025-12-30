@@ -11,7 +11,16 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   try {
     const products = await Product.find();
-    res.json(products);
+    // Convert image buffer to base64 data URL for frontend
+    const formatted = products.map(p => ({
+      _id: p._id,
+      name: p.name,
+      design: p.design,
+      image: p.image && p.image.data ? `data:${p.image.contentType};base64,${p.image.data.toString('base64')}` : '',
+      createdAt: p.createdAt,
+      updatedAt: p.updatedAt
+    }));
+    res.json(formatted);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -32,9 +41,12 @@ router.get('/:id', async (req, res) => {
 router.post('/', auth, upload.single('image'), async (req, res) => {
   try {
     const { name, design } = req.body;
-    let image = '';
+    let image = undefined;
     if (req.file) {
-      image = `/uploads/${req.file.filename}`;
+      image = {
+        data: req.file.buffer,
+        contentType: req.file.mimetype
+      };
     }
     const newProduct = new Product({ name, design, image });
     await newProduct.save();
